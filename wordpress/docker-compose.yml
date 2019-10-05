@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  wordpress:
+    build: 
+      context: .
+      dockerfile: Dockerfile.Apache
+    container_name: wordpress
+    ports:
+      - 8081:80
+    volumes:
+      - .:/var/www/html
+    networks: 
+      custom_network:
+        ipv4_address: 172.25.0.5 
+  db:
+    image: mysql:5.6
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      custom_network:
+        ipv4_address: 172.25.0.10 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadminWP
+    depends_on:
+      - db
+    ports:
+      - 8082:80
+    networks: 
+      custom_network:
+        ipv4_address: 172.25.0.4 
+networks:
+  custom_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24

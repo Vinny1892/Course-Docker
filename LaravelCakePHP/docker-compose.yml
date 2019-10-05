@@ -1,0 +1,49 @@
+version: '3.3'
+volumes:
+  data:
+  app:
+services:
+  db:
+    image: mysql:latest
+    container_name: "mysql-LaravelPHP"
+    ports:
+      - "3306:3306"
+    volumes:
+      - data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      #senha do mysql
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    networks: 
+      custom_network:
+        ipv4_address: 172.100.0.3
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: "phpmyadmin-LaravelPHP"
+    depends_on:
+      - db
+    ports:
+      - 8000:80
+    networks: 
+      custom_network:
+        ipv4_address: 172.100.0.2  
+  php-apache:
+    container_name: "app-Laravel"
+    build: .
+    #command: "composer install"
+    ports:
+      - 8080:80
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    networks: 
+      custom_network:
+        ipv4_address: 172.100.0.4    
+networks:
+  custom_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.100.0.0/24

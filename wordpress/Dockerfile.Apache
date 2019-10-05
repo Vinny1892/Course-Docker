@@ -1,0 +1,6 @@
+FROM php:7.2-apache
+ENV APP_HOME /var/www/html
+RUN docker-php-ext-install mysqli
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
+RUN chown -R www-data:www-data $APP_HOME
+

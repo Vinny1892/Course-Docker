@@ -1,0 +1,11 @@
+FROM node:slim
+LABEL mantainer = "Vinicius"
+ENV HOME /usr/app
+WORKDIR /usr/app
+COPY *.json .
+COPY yarn.lock .
+COPY . .
+RUN yarn
+EXPOSE 8080
+CMD ["yarn", "serve"]
+
